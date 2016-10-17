@@ -2,6 +2,7 @@ package com.visa.core.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.sun.tools.corba.se.idl.InterfaceGen;
+import com.sun.tools.hat.internal.parser.Reader;
 import com.sun.tools.javah.Util;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,9 +10,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.io.*;
 import java.sql.SQLException;
 
 
@@ -20,52 +25,38 @@ import java.sql.SQLException;
  *
  * Created by visa on 2016/10/7.
  */
+
 @Configuration
-@PropertySources(
-    @PropertySource("classpath:db.properties")
-)
+@PropertySource({"classpath:db.properties",""})
 public class ResourcesLoader {
-     private static final Logger logger=Logger.getLogger(ResourcesLoader.class);
+
+    @Resource
+    private Environment environment;
+
+    private static final Logger logger=Logger.getLogger(ResourcesLoader.class);
 
 
-/***********************************数据源配置项******************************************/
-    @Value("${db.driver}")
-    String driverClass;
-    @Value("${db.url}")
-    String url;
-    @Value("${db.username}")
-    String userName;
-    @Value("${db.password}")
-    String passWord;
-
-    @Value("${db.maxActive}")
-    String maxActive;
-    @Value("${db.validationQuery}")
-    String validationQuery;
-    @Value("${db.filters}")
-    String filters;
-
-
-
+    /***数据源配置项**********/
     @Bean(name="dataSource")
-    public DataSource dataSource(){
+    public DataSource dataSource() throws Exception{
         logger.info("DataSource");
+
         DruidDataSource dataSource=new DruidDataSource();
-        dataSource.setDriverClassName(driverClass);
-        dataSource.setUrl(url);
-        dataSource.setUsername(userName);
-        dataSource.setPassword(passWord);
-        dataSource.setMaxActive(Integer.valueOf(maxActive));
-        dataSource.setValidationQuery(validationQuery);
+        dataSource.setDriverClassName(environment.getProperty("db.driver"));
+        dataSource.setUrl(environment.getProperty("db.url"));
+        dataSource.setUsername(environment.getProperty("db.username"));
+        dataSource.setPassword(environment.getProperty("db.password"));
+        dataSource.setMaxActive(Integer.valueOf(environment.getProperty("db.maxActive")));
+        dataSource.setValidationQuery(environment.getProperty("db.validationQuery"));
         try{
-            dataSource.setFilters(filters);
+            dataSource.setFilters(environment.getProperty("db.filters"));
         }catch (SQLException e){
             logger.warn(e.getMessage());
         }
         return dataSource;
     }
 
-  /*********************************缓存配置项*********************************************/
+    /**********缓存配置项***********/
 
 
 }
