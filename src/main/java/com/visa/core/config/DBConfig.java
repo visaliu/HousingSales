@@ -5,16 +5,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
-import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Properties;
 
 /**
  * Created by visa on 2016/10/7.
@@ -22,46 +24,59 @@ import javax.sql.DataSource;
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
 @Import({ResourcesLoader.class})
+@EnableJpaRepositories(basePackages = "com.visa.**.repositories")
 public class DBConfig {
 
 
     @Resource(name="dataSource")
     private DataSource dataSource;
 
-    //JAP容器
-    @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(){
-        DefaultPersistenceUnitManager persistenceUnitManager=new DefaultPersistenceUnitManager();
-        persistenceUnitManager.setPackagesToScan("com.**.entity.*");
 
+    //事务管理
+    @Bean
+    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory)
+    {
+        JpaTransactionManager jpaTransactionManager= new JpaTransactionManager(entityManagerFactory.getObject());
+        return  jpaTransactionManager;
+    }
+
+
+    //JAP容器
+    @Bean(name ="entityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(){
         HibernateJpaVendorAdapter hibernateJpaVendorAdapter=new HibernateJpaVendorAdapter();
         hibernateJpaVendorAdapter.setShowSql(true);
+        hibernateJpaVendorAdapter.setGenerateDdl(true);
+
+        Properties jpaProperties = new Properties();
+        jpaProperties.put("hibernate.dialect","org.hibernate.dialect.MySQLDialect");
+        jpaProperties.put("hibernate.show_sql","true");
+        jpaProperties.put("hibernate.format_sql","true");
+        jpaProperties.put("hibernate.hbm2ddl.auto","update");
 
 
         LocalContainerEntityManagerFactoryBean entityManagerFactory=new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
         entityManagerFactory.setJpaVendorAdapter(hibernateJpaVendorAdapter);
-    //    entityManagerFactory.setJpaProperties();
-        entityManagerFactory.setPersistenceUnitManager(persistenceUnitManager);
+        entityManagerFactory.setJpaProperties(jpaProperties);
+        entityManagerFactory.setPackagesToScan("com.visa.**.entity");
+        entityManagerFactory.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
 
         return  entityManagerFactory;
 
     }
 
-    //事务管理
-    @Bean
-    public JpaTransactionManager transactionManager(EntityManagerFactory  factory){
-        JpaTransactionManager jpaTransactionManager=new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(factory);
-        return jpaTransactionManager;
 
-    }
+
+
+
 
     //事务异常处理
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor(){
         return new PersistenceExceptionTranslationPostProcessor();
     }
+
 
 
 }
