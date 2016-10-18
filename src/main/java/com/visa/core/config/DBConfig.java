@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
+import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -29,12 +31,18 @@ public class DBConfig {
     //JAP容器
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(){
+        DefaultPersistenceUnitManager persistenceUnitManager=new DefaultPersistenceUnitManager();
+        persistenceUnitManager.setPackagesToScan("com.**.entity.*");
+
         HibernateJpaVendorAdapter hibernateJpaVendorAdapter=new HibernateJpaVendorAdapter();
         hibernateJpaVendorAdapter.setShowSql(true);
+
 
         LocalContainerEntityManagerFactoryBean entityManagerFactory=new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
         entityManagerFactory.setJpaVendorAdapter(hibernateJpaVendorAdapter);
+    //    entityManagerFactory.setJpaProperties();
+        entityManagerFactory.setPersistenceUnitManager(persistenceUnitManager);
 
         return  entityManagerFactory;
 

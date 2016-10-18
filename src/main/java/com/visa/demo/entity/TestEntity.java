@@ -1,4 +1,4 @@
-package com.visa.demo;
+package com.visa.demo.entity;
 
 import javax.persistence.*;
 

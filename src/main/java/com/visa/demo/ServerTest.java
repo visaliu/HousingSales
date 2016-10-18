@@ -1,5 +1,6 @@
 package com.visa.demo;
 
+import com.visa.demo.entity.TestEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

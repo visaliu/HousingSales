@@ -51,14 +51,20 @@ public class ResourcesLoader {
     public DataSource dataSource(){
         logger.info("DataSource");
         DruidDataSource dataSource=new DruidDataSource();
-        dataSource.setDriverClassName(driverClass);
-        dataSource.setUrl(url);
-        dataSource.setUsername(userName);
-        dataSource.setPassword(passWord);
-        dataSource.setMaxActive(Integer.valueOf(maxActive));
-        dataSource.setValidationQuery(validationQuery);
+//        dataSource.setDriverClassName(driverClass);
+//        dataSource.setUrl(url);
+//        dataSource.setUsername(userName);
+//        dataSource.setPassword(passWord);
+//        dataSource.setMaxActive(Integer.valueOf(maxActive));
+//        dataSource.setValidationQuery(validationQuery);
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/housing_sales?zeroDateTimeBehavior=convertToNull&autoReconnect=true&useUnicode=true&characterEncoding=utf-8");
+        dataSource.setUsername("root");
+        dataSource.setPassword("");
+        dataSource.setMaxActive(20);
+        dataSource.setValidationQuery("SELECT 'x'");
         try{
-            dataSource.setFilters(filters);
+            dataSource.setFilters("stat");
         }catch (SQLException e){
             logger.warn(e.getMessage());
         }
