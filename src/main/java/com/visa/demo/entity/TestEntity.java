@@ -1,11 +1,16 @@
 package com.visa.demo.entity;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 /**
  * Created by visa on 2016/10/7.
  */
-
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name="test")
 public class TestEntity {
@@ -15,23 +20,4 @@ public class TestEntity {
 
     private String name;
 
-    public TestEntity(String name) {
-        this.name = name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

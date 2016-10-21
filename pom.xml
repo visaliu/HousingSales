@@ -217,36 +217,18 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.4</version>
+        </dependency>
+
         <!-- jetty <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-webapp</artifactId>
             <version>9.2.2.v20140723</version> <scope>test</scope> </dependency> <dependency>
             <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId> <version>9.2.2.v20140723</version>
             </dependency> -->
 
     </dependencies>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.5.1</version>
-                <configuration>
-                    <formats>
-                        <format>xml</format>
-                    </formats>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>cobertura</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
-    </reporting>
 
 
 </project>

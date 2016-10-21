@@ -9,12 +9,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
+import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
+import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -25,6 +29,7 @@ import java.util.Properties;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Import({ResourcesLoader.class})
 @EnableJpaRepositories(basePackages = "com.visa.**.repositories")
+
 public class DBConfig {
 
 
@@ -37,6 +42,7 @@ public class DBConfig {
     public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory)
     {
         JpaTransactionManager jpaTransactionManager= new JpaTransactionManager(entityManagerFactory.getObject());
+
         return  jpaTransactionManager;
     }
 
@@ -56,7 +62,13 @@ public class DBConfig {
 
 
         LocalContainerEntityManagerFactoryBean entityManagerFactory=new LocalContainerEntityManagerFactoryBean();
-        entityManagerFactory.setJtaDataSource(dataSource);
+        entityManagerFactory.setDataSource(dataSource);
+        /*数据源设置为JTA数据源，事物类型为JTA，如果数据源配置成普通数据源，则事物类型为本地事物：RESOURCE_LOCAL
+        entityManagerFactory.setJtaDataSource(dataSource); */
+
+        MutablePersistenceUnitInfo persistenceUnitInfo=new MutablePersistenceUnitInfo();
+        persistenceUnitInfo.setTransactionType(PersistenceUnitTransactionType.RESOURCE_LOCAL);
+
         entityManagerFactory.setJpaVendorAdapter(hibernateJpaVendorAdapter);
         entityManagerFactory.setJpaProperties(jpaProperties);
         entityManagerFactory.setPackagesToScan("com.visa.**.entity");
