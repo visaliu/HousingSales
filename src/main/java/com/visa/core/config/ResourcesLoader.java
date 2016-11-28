@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 
 /**
- * 资源文件加载类
+ * 资源文件加载类，所有的配置都加载在此类的Bean中，
  *
  * Created by visa on 2016/10/7.
  */
@@ -48,6 +48,7 @@ public class ResourcesLoader {
         dataSource.setPassword(environment.getProperty("db.password"));
         dataSource.setMaxActive(Integer.valueOf(environment.getProperty("db.maxActive")));
         dataSource.setValidationQuery(environment.getProperty("db.validationQuery"));
+        //dataSource.setDefaultAutoCommit(false);
         try{
             dataSource.setFilters(environment.getProperty("db.filters"));
         }catch (SQLException e){

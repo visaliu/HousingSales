@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by visa on 2016/10/6.
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {AppConfig.class, DBConfig.class})
 @PropertySource("classpath:tt.properties")
+//@Transactional
 public class ServerTestTest {
 
     @Value("${tt.t1}")
@@ -33,5 +35,10 @@ public class ServerTestTest {
     @Test
     public void testTest2() throws Exception {
         serverTest.test2();
+    }
+
+    @Test
+    public void testTest3() throws Exception {
+        serverTest.test3();
     }
 }

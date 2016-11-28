@@ -15,6 +15,7 @@ import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.DefaultTransactionStatus;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManagerFactory;
@@ -36,19 +37,8 @@ public class DBConfig {
     @Resource(name="dataSource")
     private DataSource dataSource;
 
-
-    //事务管理
-    @Bean
-    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory)
-    {
-        JpaTransactionManager jpaTransactionManager= new JpaTransactionManager(entityManagerFactory.getObject());
-
-        return  jpaTransactionManager;
-    }
-
-
     //JAP容器
-    @Bean(name ="entityManagerFactory")
+    @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(){
         HibernateJpaVendorAdapter hibernateJpaVendorAdapter=new HibernateJpaVendorAdapter();
         hibernateJpaVendorAdapter.setShowSql(true);
@@ -79,7 +69,14 @@ public class DBConfig {
     }
 
 
-
+    //事务管理
+    @Bean
+    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory)
+    {
+        JpaTransactionManager jpaTransactionManager= new JpaTransactionManager(entityManagerFactory.getObject());
+       // jpaTransactionManager.set
+        return  jpaTransactionManager;
+    }
 
 
 
